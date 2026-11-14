@@ -1,31 +1,23 @@
 # Portfólio — Luigy Renan
 
-Portfólio pessoal criado para apresentar meu perfil, habilidades e projetos de desenvolvimento. O site reúne projetos pessoais e demonstrações, com navegação por seções e layout adaptável a diferentes tamanhos de tela.
+Portfólio pessoal para apresentar meu perfil, minha experiência, formação, competências técnicas e projetos em desenvolvimento web, sistemas e inteligência artificial.
 
-## Autor
+## Acesso
 
-**Luigy Renan**  
-GitHub: [@renanluigy-png](https://github.com/renanluigy-png)
+- **Site:** https://renanluigy-png.github.io/portfolio-luigy/
+- **Repositório:** https://github.com/renanluigy-png/portfolio-luigy
+- **GitHub:** https://github.com/renanluigy-png
 
-## Acesse o site
+## Sobre o projeto
 
-Após ativar o GitHub Pages, o portfólio ficará disponível em:
+O site foi desenvolvido com HTML, CSS, JavaScript e Bootstrap. O conteúdo está organizado em seções:
 
-**https://renanluigy-png.github.io/portfolio-luigy/**
-
-Repositório: https://github.com/renanluigy-png/portfolio-luigy
-
-## Descrição e funcionamento
-
-O portfólio apresenta as seguintes seções:
-
-- **Perfil:** apresentação pessoal e área de interesse.
-- **Projetos:** cards com descrições, tecnologias e links para repositórios ou demonstrações.
-- **Habilidades:** tecnologias presentes nos projetos.
-- **Contato:** acesso ao GitHub e ao Linktree.
-- **Menu de navegação:** atalhos para as seções do site.
-
-O arquivo `index.html` organiza o conteúdo. O `style.css` define identidade visual, layout responsivo, transições e animações. O `script.js` controla o filtro dos projetos, as animações de entrada, o menu mobile e a atualização automática do ano no rodapé.
+- **Perfil:** apresentação e áreas de interesse.
+- **Experiência:** atuação como Auxiliar de Escritório na Cortez Móveis em 2026 e atividades relacionadas a suporte de TI, sistemas internos, infraestrutura e rotinas administrativas.
+- **Projetos:** seleção de projetos pessoais, com descrições, tecnologias e links disponíveis.
+- **Competências:** ferramentas e conhecimentos técnicos.
+- **Formação:** curso Técnico em Desenvolvimento de Sistemas (cursando), Ensino Médio e cursos complementares.
+- **Contato:** e-mail, GitHub e Linktree.
 
 ## Tecnologias utilizadas
 
@@ -34,23 +26,22 @@ O arquivo `index.html` organiza o conteúdo. O `style.css` define identidade vis
 - JavaScript
 - Bootstrap 5.3.3
 - Bootstrap Icons
+- Google Fonts
 - Git e GitHub
 
-O Bootstrap e os ícones são carregados por CDN, portanto precisam de conexão com a internet para serem exibidos.
+O Bootstrap, os ícones e as fontes são carregados por CDN.
 
-## Recurso novo adicionado
+## Recurso adicional implementado
 
-**Filtro interativo de projetos e animações de entrada ao rolar a página.**
+O portfólio possui **filtros interativos para os projetos** e **animações de entrada durante a rolagem da página**.
 
-O visitante pode filtrar os projetos pelas categorias **Todos**, **Web**, **Aplicações** e **Profissional**, sem recarregar a página. Além disso, os elementos aparecem com uma transição suave quando entram na área visível da tela.
+### Como funciona
 
-### Como o recurso foi implementado
-
-1. Cada card recebeu o atributo `data-category`, que identifica suas categorias.
-2. Os botões possuem o atributo `data-filter`. Um evento de clique em JavaScript compara a categoria selecionada com as categorias de cada card e mostra ou oculta os projetos.
-3. A classe `is-active` e o atributo `aria-pressed` indicam o filtro selecionado, inclusive para tecnologias assistivas.
-4. Para as animações, o JavaScript utiliza a API `IntersectionObserver` para detectar quando um elemento com a classe `reveal` entra na área visível e adiciona a classe `is-visible`, que ativa a transição definida no CSS.
-5. A folha de estilos respeita a preferência de redução de movimento do sistema (`prefers-reduced-motion`).
+- Cada cartão de projeto possui categorias definidas em `data-category`.
+- Os botões de filtro usam `data-filter` para selecionar a categoria.
+- O JavaScript compara a categoria escolhida com as categorias dos cartões e exibe somente os itens correspondentes, sem recarregar a página.
+- A API `IntersectionObserver` identifica quando os elementos entram na área visível e adiciona a classe `is-visible`, que ativa as transições definidas no CSS.
+- A preferência do navegador por movimento reduzido é respeitada por meio de `prefers-reduced-motion`.
 
 ## Estrutura de arquivos
 
@@ -62,10 +53,13 @@ portfolio-luigy/
 └── README.md
 ```
 
-## Publicação no GitHub Pages
+## Funcionamento
 
-1. Abra **Settings → Pages** no repositório.
-2. Em **Build and deployment**, selecione **Deploy from a branch**.
-3. Escolha a branch **main** e a pasta **/(root)**.
-4. Clique em **Save**.
-5. Aguarde a publicação e acesse o endereço indicado na seção **Acesse o site**.
+O arquivo `index.html` contém a estrutura e o conteúdo das seções. O `style.css` define a identidade visual, os componentes, o layout responsivo e as transições. O `script.js` controla os filtros de projetos, as animações de entrada, a navegação compacta e a cópia do e-mail.
+
+Os projetos possuem links para seus repositórios ou demonstrações quando disponíveis. O chatbot de atendimento com IA é apresentado conforme a descrição do currículo, sem atribuir a ele um repositório não identificado.
+
+## Autor
+
+**Luigy Renan**  
+[GitHub](https://github.com/renanluigy-png) · [Linktree](https://linktr.ee/Luigy.Renan)
