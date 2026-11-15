@@ -67,3 +67,19 @@ Os projetos possuem links para seus repositórios ou demonstrações quando disp
 
 **Luigy Renan**  
 [GitHub](https://github.com/renanluigy-png) · [Linktree](https://linktr.ee/Luigy.Renan)
+
+
+## Experiência visual e responsividade
+
+A interface usa uma identidade monocromática com tipografia editorial, contraste elevado e componentes adaptáveis. Os efeitos adicionais incluem:
+
+- Campo de partículas e linhas conectadas no destaque inicial, com animação pausada fora da área visível.
+- Faixa tipográfica em movimento contínuo entre a apresentação e o perfil.
+- Abertura animada, cursor de acompanhamento e iluminação difusa em computadores compatíveis.
+- Inclinação 3D, reflexo e brilho localizado nos cartões de projeto.
+- Movimento de perspectiva no painel principal e resposta magnética discreta nos botões.
+- Barra de progresso de leitura, navegação com seção ativa e revelação gradual dos conteúdos.
+
+### Adaptação a telas
+
+O layout possui pontos de quebra para desktop, tablets e celulares. O destaque inicial passa para uma coluna em larguras intermediárias; os cards, fatos e grupos reorganizam-se em telas estreitas; os tamanhos de fonte, espaçamentos e elementos decorativos diminuem progressivamente. Efeitos de ponteiro e perspectiva são desligados em dispositivos de toque. A configuração `prefers-reduced-motion` desativa animações não essenciais.
