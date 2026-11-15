@@ -37,14 +37,14 @@ A interface utiliza uma paleta monocromática (preto, branco e tons de cinza), c
 
 ## Recurso adicional implementado
 
-O portfólio possui **filtros interativos para os projetos** e **animações de entrada durante a rolagem da página**.
+O portfólio possui **filtros interativos para os projetos**, **animações de entrada**, **interações 3D nos cartões**, **iluminação dinâmica**, **cursor personalizado para desktop**, **efeitos magnéticos nos botões** e uma **cortina de abertura animada**.
 
 ### Como funciona
 
 - Cada cartão de projeto possui categorias definidas em `data-category`.
 - Os botões de filtro usam `data-filter` para selecionar a categoria.
 - O JavaScript compara a categoria escolhida com as categorias dos cartões e exibe somente os itens correspondentes, sem recarregar a página.
-- A API `IntersectionObserver` identifica quando os elementos entram na área visível e adiciona a classe `is-visible`, que ativa as transições definidas no CSS.
+- A API `IntersectionObserver` identifica quando os elementos entram na área visível e adiciona a classe `is-visible`, que ativa as transições definidas no CSS. Nos computadores, o cursor cria uma lente de luz e os cartões respondem à posição do ponteiro com inclinação 3D, brilho localizado e reflexo animado. Os botões têm deslocamento magnético limitado, a navegação destaca a seção atual e a abertura usa uma cortina curta de apresentação. Esses efeitos são desativados ou reduzidos em dispositivos sem ponteiro preciso e quando o usuário prefere movimento reduzido.
 - A preferência do navegador por movimento reduzido é respeitada por meio de `prefers-reduced-motion`.
 
 ## Estrutura de arquivos
