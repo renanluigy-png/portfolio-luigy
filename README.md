@@ -31,6 +31,10 @@ O site foi desenvolvido com HTML, CSS, JavaScript e Bootstrap. O conteúdo está
 
 O Bootstrap, os ícones e as fontes são carregados por CDN.
 
+## Identidade visual e efeitos
+
+A interface utiliza uma paleta monocromática (preto, branco e tons de cinza), composição editorial, tipografia de alto contraste, textura sutil, navegação translúcida e cartões com profundidade. Os efeitos incluem barra de progresso de leitura, iluminação difusa que acompanha o cursor, perspectiva sutil nos cartões e animações de entrada. Os efeitos de ponteiro são limitados a dispositivos compatíveis e respeitam a preferência por movimento reduzido.
+
 ## Recurso adicional implementado
 
 O portfólio possui **filtros interativos para os projetos** e **animações de entrada durante a rolagem da página**.
