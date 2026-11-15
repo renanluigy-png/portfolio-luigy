@@ -531,3 +531,8 @@ body.cursor-hover .cursor-core{opacity:0}
  .project-card::after{display:none}
  .button:hover,.nav-cta:hover{transform:none}
 }
+
+/* Pointer-driven perspective for the central identity panel. */
+.hero-art:hover .identity-panel{
+  transform:perspective(1100px) rotateX(var(--panel-rx,0deg)) rotateY(var(--panel-ry,0deg)) rotateZ(0deg) translateY(-7px);
+}
