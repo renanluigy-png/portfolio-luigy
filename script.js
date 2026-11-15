@@ -1,4 +1,9 @@
-// Filtros de projetos: todos, web, sistemas e IA.
+// Portfolio interactions — filters, motion, accessibility and responsive effects.
+const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const reducedMotion = motionPreference.matches;
+
+// Project filters.
 const filterButtons = document.querySelectorAll(".filter-button");
 const projectCards = document.querySelectorAll(".project-card");
 const emptyState = document.getElementById("emptyState");
@@ -15,7 +20,7 @@ filterButtons.forEach((button) => {
     });
 
     projectCards.forEach((card) => {
-      const categories = card.dataset.category.split(" ");
+      const categories = (card.dataset.category || "").split(" ");
       const visible = filter === "all" || categories.includes(filter);
       card.hidden = !visible;
       if (visible) visibleCount += 1;
@@ -25,24 +30,31 @@ filterButtons.forEach((button) => {
   });
 });
 
-// Animações de entrada acionadas quando cada seção aparece na tela.
+// Intro curtain: always release it, even when the load event is delayed.
+const finishIntro = () => document.body.classList.add("page-loaded");
+window.addEventListener("load", () => window.setTimeout(finishIntro, 180), { once: true });
+window.setTimeout(finishIntro, 1800);
+
+// Progressive section reveals with a small stagger.
 const revealItems = document.querySelectorAll(".reveal");
-if ("IntersectionObserver" in window) {
-  const observer = new IntersectionObserver((entries, currentObserver) => {
+if (!reducedMotion && "IntersectionObserver" in window) {
+  const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add("is-visible");
-        currentObserver.unobserve(entry.target);
+        observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
-
-  revealItems.forEach((item) => observer.observe(item));
+  }, { threshold: 0.1 });
+  revealItems.forEach((item, index) => {
+    item.style.setProperty("--reveal-delay", `${(index % 4) * 65}ms`);
+    revealObserver.observe(item);
+  });
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
 
-// Fecha a navegação compacta depois que uma seção é selecionada.
+// Mobile Bootstrap navigation closes after a destination is selected.
 document.querySelectorAll("#portfolioMenu .nav-link, #portfolioMenu .nav-cta").forEach((link) => {
   link.addEventListener("click", () => {
     const menu = document.getElementById("portfolioMenu");
@@ -52,48 +64,42 @@ document.querySelectorAll("#portfolioMenu .nav-link, #portfolioMenu .nav-cta").f
   });
 });
 
-// Copia o e-mail sem inserir números de telefone na página pública.
+// Email copy button.
 const copyButton = document.querySelector("[data-copy-email]");
 const copyToast = document.getElementById("copyToast");
 if (copyButton && navigator.clipboard) {
   copyButton.addEventListener("click", async () => {
     try {
       await navigator.clipboard.writeText(copyButton.dataset.copyEmail);
-      copyToast.classList.add("is-visible");
-      window.setTimeout(() => copyToast.classList.remove("is-visible"), 2200);
-    } catch (error) {
+      copyToast.textContent = "E-mail copiado.";
+    } catch {
       copyToast.textContent = "Não foi possível copiar. Use o link de e-mail.";
-      copyToast.classList.add("is-visible");
-      window.setTimeout(() => copyToast.classList.remove("is-visible"), 2600);
     }
+    copyToast.classList.add("is-visible");
+    window.setTimeout(() => copyToast.classList.remove("is-visible"), 2300);
   });
 }
-
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// Barra de progresso de leitura no topo.
+// Reading progress indicator.
 const progressBar = document.querySelector("#scrollProgress span");
-let scrollTicking = false;
-const updateScrollProgress = () => {
-  if (!progressBar) return;
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
-  progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
-  scrollTicking = false;
+let progressFrame = 0;
+const updateProgress = () => {
+  if (progressBar) {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const value = max > 0 ? window.scrollY / max : 0;
+    progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, value))})`;
+  }
+  progressFrame = 0;
 };
 window.addEventListener("scroll", () => {
-  if (!scrollTicking) {
-    window.requestAnimationFrame(updateScrollProgress);
-    scrollTicking = true;
-  }
+  if (!progressFrame) progressFrame = window.requestAnimationFrame(updateProgress);
 }, { passive: true });
-updateScrollProgress();
+updateProgress();
 
-// Luz difusa acompanha o cursor em telas com mouse, sem interferir nos cliques.
+// Soft ambient pointer light.
 const pointerAura = document.querySelector(".pointer-aura");
-const canUsePointerAura = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (pointerAura && canUsePointerAura) {
+if (pointerAura && finePointer && !reducedMotion) {
   document.body.classList.add("pointer-active");
   window.addEventListener("pointermove", (event) => {
     pointerAura.style.left = `${event.clientX}px`;
@@ -101,80 +107,48 @@ if (pointerAura && canUsePointerAura) {
   }, { passive: true });
 }
 
-// Perspectiva sutil nos cards: o movimento é limitado e desativado em mobile/reduced motion.
-const supportsTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (supportsTilt) {
-  document.querySelectorAll(".project-card").forEach((card) => {
-    card.addEventListener("pointermove", (event) => {
-      const rect = card.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
-      const rotateY = (x - 0.5) * 3.5;
-      const rotateX = (0.5 - y) * 3.5;
-      card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-    });
-    card.addEventListener("pointerleave", () => {
-      card.style.transform = "";
-    });
-  });
-}
-
-
-// One-time entrance curtain: keep the page usable if scripts load slowly.
-window.addEventListener("load", () => {
-  window.setTimeout(() => document.body.classList.add("page-loaded"), 160);
-}, { once: true });
-
-// High precision pointer lens with a gentle trailing ring.
+// Custom cursor with a trailing ring; disabled for touch and reduced-motion users.
 const cursorRing = document.querySelector(".cursor-ring");
 const cursorCore = document.querySelector(".cursor-core");
-const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-if (cursorRing && cursorCore && finePointer && !reduceMotion) {
+if (cursorRing && cursorCore && finePointer && !reducedMotion) {
   document.body.classList.add("cursor-ready");
-  let pointerX = window.innerWidth / 2;
-  let pointerY = window.innerHeight / 2;
-  let ringX = pointerX;
-  let ringY = pointerY;
-  let cursorFrame = 0;
+  let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, cursorFrame = 0;
+
+  const animateRing = () => {
+    rx += (x - rx) * 0.2;
+    ry += (y - ry) * 0.2;
+    cursorRing.style.transform = `translate3d(${rx}px,${ry}px,0) translate(-50%,-50%)`;
+    if (Math.abs(x-rx) > 0.25 || Math.abs(y-ry) > 0.25) {
+      cursorFrame = requestAnimationFrame(animateRing);
+    } else cursorFrame = 0;
+  };
 
   window.addEventListener("pointermove", (event) => {
-    pointerX = event.clientX;
-    pointerY = event.clientY;
-    cursorCore.style.transform = `translate3d(${pointerX}px,${pointerY}px,0) translate(-50%,-50%)`;
-    if (!cursorFrame) cursorFrame = window.requestAnimationFrame(moveRing);
+    x = event.clientX; y = event.clientY;
+    cursorCore.style.transform = `translate3d(${x}px,${y}px,0) translate(-50%,-50%)`;
+    if (!cursorFrame) cursorFrame = requestAnimationFrame(animateRing);
   }, { passive: true });
 
-  function moveRing() {
-    ringX += (pointerX - ringX) * 0.22;
-    ringY += (pointerY - ringY) * 0.22;
-    cursorRing.style.transform = `translate3d(${ringX}px,${ringY}px,0) translate(-50%,-50%)`;
-    if (Math.abs(pointerX-ringX) > .3 || Math.abs(pointerY-ringY) > .3) {
-      cursorFrame = window.requestAnimationFrame(moveRing);
-    } else {
-      cursorFrame = 0;
-    }
-  }
-
-  document.querySelectorAll("a,button,.project-card,.identity-panel").forEach((target) => {
-    target.addEventListener("pointerenter", () => document.body.classList.add("cursor-hover"));
-    target.addEventListener("pointerleave", () => document.body.classList.remove("cursor-hover"));
+  document.querySelectorAll("a,button,.project-card,.identity-panel").forEach((element) => {
+    element.addEventListener("pointerenter", () => document.body.classList.add("cursor-hover"));
+    element.addEventListener("pointerleave", () => document.body.classList.remove("cursor-hover"));
   });
+  document.addEventListener("pointerleave", () => document.body.classList.remove("cursor-ready"));
+  document.addEventListener("pointerenter", () => document.body.classList.add("cursor-ready"));
 }
 
-// Richer project-card interaction: 3D tilt, pointer light and a reflective sweep.
-if (finePointer && !reduceMotion) {
-  document.querySelectorAll(".project-card").forEach((card) => {
+// Advanced card tilt and localized reflection. A single listener owns the transform.
+if (finePointer && !reducedMotion) {
+  projectCards.forEach((card) => {
     card.addEventListener("pointermove", (event) => {
       const rect = card.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
-      const rotateY = (x - .5) * 8;
-      const rotateX = (.5 - y) * 8;
-      card.style.setProperty("--mx", `${x * 100}%`);
-      card.style.setProperty("--my", `${y * 100}%`);
-      card.style.transform = `perspective(1100px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-7px) scale(1.008)`;
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      const rotateY = (px - 0.5) * 7;
+      const rotateX = (0.5 - py) * 7;
+      card.style.setProperty("--mx", `${px * 100}%`);
+      card.style.setProperty("--my", `${py * 100}%`);
+      card.style.transform = `perspective(1050px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px) scale(1.006)`;
       card.classList.add("is-hovered");
     });
     card.addEventListener("pointerleave", () => {
@@ -183,18 +157,18 @@ if (finePointer && !reduceMotion) {
     });
   });
 
-  // The monogram panel responds with a restrained, deeper parallax tilt.
+  // Central identity panel parallax.
   const heroArt = document.querySelector(".hero-art");
   const identityPanel = document.querySelector(".identity-panel");
   if (heroArt && identityPanel) {
     heroArt.addEventListener("pointermove", (event) => {
       const rect = heroArt.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width;
-      const y = (event.clientY - rect.top) / rect.height;
-      identityPanel.style.setProperty("--panel-rx", `${(0.5-y)*7}deg`);
-      identityPanel.style.setProperty("--panel-ry", `${(x-0.5)*9}deg`);
-      heroArt.style.setProperty("--hero-x", `${x*100}%`);
-      heroArt.style.setProperty("--hero-y", `${y*100}%`);
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      identityPanel.style.setProperty("--panel-rx", `${(0.5-py)*8}deg`);
+      identityPanel.style.setProperty("--panel-ry", `${(px-0.5)*10}deg`);
+      heroArt.style.setProperty("--hero-x", `${px*100}%`);
+      heroArt.style.setProperty("--hero-y", `${py*100}%`);
     });
     heroArt.addEventListener("pointerleave", () => {
       identityPanel.style.setProperty("--panel-rx", "0deg");
@@ -202,14 +176,14 @@ if (finePointer && !reduceMotion) {
     });
   }
 
-  // Magnetic movement is capped to a few pixels, preserving precise targets.
+  // Small magnetic response on calls to action.
   document.querySelectorAll(".button,.nav-cta").forEach((button) => {
     button.addEventListener("pointermove", (event) => {
       const rect = button.getBoundingClientRect();
-      const dx = (event.clientX - rect.left - rect.width / 2) / rect.width;
-      const dy = (event.clientY - rect.top - rect.height / 2) / rect.height;
-      button.style.setProperty("--mag-x", `${dx * 5}px`);
-      button.style.setProperty("--mag-y", `${dy * 4}px`);
+      const dx = (event.clientX - rect.left - rect.width/2) / rect.width;
+      const dy = (event.clientY - rect.top - rect.height/2) / rect.height;
+      button.style.setProperty("--mag-x", `${dx*5}px`);
+      button.style.setProperty("--mag-y", `${dy*4}px`);
     });
     button.addEventListener("pointerleave", () => {
       button.style.setProperty("--mag-x", "0px");
@@ -218,7 +192,7 @@ if (finePointer && !reduceMotion) {
   });
 }
 
-// Keep the active section reflected in the navigation while scrolling.
+// Active navigation state.
 const sectionLinks = new Map(
   [...document.querySelectorAll(".portfolio-nav .nav-link")]
     .map((link) => [link.getAttribute("href").slice(1), link])
@@ -237,3 +211,100 @@ if ("IntersectionObserver" in window && sectionLinks.size) {
     if (section) sectionObserver.observe(section);
   });
 }
+
+// Fine monochrome particle field in the hero. Pauses when off-screen.
+(() => {
+  const canvas = document.getElementById("heroParticles");
+  const hero = document.querySelector(".hero");
+  if (!canvas || !hero || reducedMotion) return;
+
+  const context = canvas.getContext("2d", { alpha: true });
+  if (!context) return;
+
+  let width = 0, height = 0, dpr = 1, particles = [], frame = 0, visible = true;
+  let pointer = null;
+  const maxDistance = 132;
+
+  const resize = () => {
+    const rect = hero.getBoundingClientRect();
+    width = Math.max(1, rect.width);
+    height = Math.max(1, rect.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const density = window.matchMedia("(max-width: 767px)").matches ? 1/12500 : 1/9800;
+    const count = Math.max(24, Math.min(82, Math.round(width * height * density)));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - .5) * .18,
+      vy: (Math.random() - .5) * .18,
+      radius: Math.random() * 1.15 + .35,
+      alpha: Math.random() * .38 + .12
+    }));
+  };
+
+  const draw = () => {
+    if (!visible) { frame = 0; return; }
+    context.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -8) p.x = width + 8;
+      if (p.x > width + 8) p.x = -8;
+      if (p.y < -8) p.y = height + 8;
+      if (p.y > height + 8) p.y = -8;
+
+      if (pointer) {
+        const dx = p.x-pointer.x, dy = p.y-pointer.y;
+        const distance = Math.hypot(dx,dy);
+        if (distance < 105 && distance > 0) {
+          const force = (105-distance)/105 * .012;
+          p.vx += dx/distance*force;
+          p.vy += dy/distance*force;
+        }
+      }
+      p.vx *= .995; p.vy *= .995;
+      context.beginPath();
+      context.arc(p.x,p.y,p.radius,0,Math.PI*2);
+      context.fillStyle = `rgba(255,255,255,${p.alpha})`;
+      context.fill();
+
+      for (let k = i+1; k < particles.length; k++) {
+        const q = particles[k];
+        const distance = Math.hypot(p.x-q.x,p.y-q.y);
+        if (distance < maxDistance) {
+          context.beginPath();
+          context.moveTo(p.x,p.y);
+          context.lineTo(q.x,q.y);
+          context.strokeStyle = `rgba(255,255,255,${(1-distance/maxDistance)*.095})`;
+          context.lineWidth = .55;
+          context.stroke();
+        }
+      }
+    }
+    frame = requestAnimationFrame(draw);
+  };
+
+  resize();
+  if ("IntersectionObserver" in window) {
+    const canvasObserver = new IntersectionObserver((entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible && !frame) frame = requestAnimationFrame(draw);
+      if (!visible && frame) { cancelAnimationFrame(frame); frame = 0; }
+    }, { threshold: 0 });
+    canvasObserver.observe(hero);
+  }
+  hero.addEventListener("pointermove", (event) => {
+    const rect = hero.getBoundingClientRect();
+    pointer = { x: event.clientX-rect.left, y: event.clientY-rect.top };
+  }, { passive: true });
+  hero.addEventListener("pointerleave", () => { pointer = null; });
+  window.addEventListener("resize", () => {
+    resize();
+    if (visible && !frame) frame = requestAnimationFrame(draw);
+  }, { passive: true });
+  if (visible) frame = requestAnimationFrame(draw);
+})();
