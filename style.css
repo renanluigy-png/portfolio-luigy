@@ -448,3 +448,86 @@ body.pointer-active .pointer-aura{opacity:1}
  .project-card{transform:none!important}
  .pointer-aura{display:none}
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SIGNATURE INTERACTION LAYER — precision motion / monochrome
+   ═══════════════════════════════════════════════════════════════ */
+
+/* A brief, quiet opening curtain gives the first view a deliberate entrance. */
+.intro-curtain{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#050505;pointer-events:none;transform:translateY(0);transition:transform 1.05s cubic-bezier(.76,0,.18,1)}
+.intro-brand{color:#fff;font-size:clamp(3.5rem,9vw,6rem);font-weight:800;letter-spacing:-.13em;line-height:1}
+.intro-brand span{color:#777}
+.intro-caption{color:#858585;font-family:var(--mono);font-size:.55rem;letter-spacing:.22em}
+.intro-line{width:100px;height:1px;overflow:hidden;background:rgba(255,255,255,.14)}
+.intro-line span{display:block;width:100%;height:100%;background:#fff;transform:translateX(-110%);animation:introLoad .8s .12s var(--ease) forwards}
+body.page-loaded .intro-curtain{transform:translateY(-101%)}
+@keyframes introLoad{to{transform:translateX(0)}}
+
+/* A minimal custom cursor: an outline lens, never intercepting input. */
+.cursor-ring,.cursor-core{position:fixed;top:0;left:0;z-index:999;width:34px;height:34px;border:1px solid rgba(255,255,255,.72);border-radius:50%;opacity:0;pointer-events:none;transform:translate3d(-50%,-50%,0);mix-blend-mode:difference;transition:width .25s var(--ease),height .25s var(--ease),border-color .25s,opacity .25s}
+.cursor-core{width:4px;height:4px;border:0;background:#fff;transition:opacity .2s}
+body.cursor-ready .cursor-ring,body.cursor-ready .cursor-core{opacity:1}
+body.cursor-hover .cursor-ring{width:62px;height:62px;border-color:#fff}
+body.cursor-hover .cursor-core{opacity:0}
+
+/* Layered highlight follows the pointer over each project without covering content. */
+.project-card{position:relative;isolation:isolate;transform-style:preserve-3d;will-change:transform;transition:transform .42s cubic-bezier(.2,.8,.2,1),box-shadow .42s,border-color .35s}
+.project-card::before{content:"";position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;background:radial-gradient(360px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.24),transparent 48%);mix-blend-mode:screen;transition:opacity .32s}
+.project-card::after{content:"";position:absolute;inset:0;z-index:4;opacity:0;pointer-events:none;background:linear-gradient(115deg,transparent 22%,rgba(255,255,255,.17) 47%,transparent 68%);transform:translateX(-130%);mix-blend-mode:screen}
+.project-card.is-hovered::before{opacity:1}
+.project-card.is-hovered::after{opacity:.8;animation:cardSheen .9s var(--ease) both}
+.project-card:hover{box-shadow:0 28px 70px rgba(0,0,0,.18)}
+.project-details,.project-visual{position:relative;z-index:1}
+@keyframes cardSheen{to{transform:translateX(130%)}}
+
+/* Reflective scan across the hero monogram panel. */
+.identity-panel{position:relative;overflow:hidden;transform-style:preserve-3d;will-change:transform}
+.identity-panel::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.075),transparent 22%,transparent 74%,rgba(255,255,255,.04))}
+.identity-panel::after{content:"";position:absolute;top:-120%;left:-30%;width:160%;height:70%;z-index:2;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(255,255,255,.12),transparent);transform:rotate(-16deg);animation:panelScan 8s 1.2s ease-in-out infinite}
+.identity-top,.identity-monogram,.identity-bottom{position:relative;z-index:1}
+@keyframes panelScan{0%,22%{top:-120%;opacity:0}35%{opacity:1}64%,100%{top:160%;opacity:0}}
+.hero-art::after{content:"";position:absolute;inset:8%;z-index:0;pointer-events:none;opacity:.5;background:radial-gradient(ellipse at var(--hero-x,50%) var(--hero-y,50%),rgba(255,255,255,.105),transparent 48%);transition:opacity .35s}
+.hero-art:hover::after{opacity:.9}
+.floating-chip{animation:chipFloat 6s ease-in-out infinite}
+.chip-systems{animation-delay:-3s}
+@keyframes chipFloat{0%,100%{translate:0 0}50%{translate:0 -8px}}
+
+/* A more deliberate type entrance and staggered content reveals. */
+.hero-kicker{animation:heroTextIn .9s .05s var(--ease) both}
+.hero h1{animation:heroTextIn 1.1s .12s var(--ease) both}
+.hero-description{animation:heroTextIn 1s .25s var(--ease) both}
+.hero-actions{animation:heroTextIn .9s .38s var(--ease) both}
+.hero-footnote{animation:heroTextIn .9s .5s var(--ease) both}
+@keyframes heroTextIn{from{opacity:0;transform:translateY(24px);clip-path:inset(0 0 35% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
+.reveal{transition-delay:var(--reveal-delay,0ms)}
+.profile-grid .reveal:nth-child(2),.projects-grid .project-card:nth-child(2),.skills-groups .skill-group:nth-child(2){--reveal-delay:100ms}
+.projects-grid .project-card:nth-child(3),.skills-groups .skill-group:nth-child(3){--reveal-delay:180ms}
+.projects-grid .project-card:nth-child(4),.skills-groups .skill-group:nth-child(4){--reveal-delay:260ms}
+
+/* Fine details: active navigation, animated underlines and button magnetism. */
+.navbar-nav .nav-link{position:relative}
+.navbar-nav .nav-link::after{content:"";position:absolute;right:0;bottom:3px;left:0;height:1px;background:#fff;transform:scaleX(0);transform-origin:right;transition:transform .3s var(--ease)}
+.navbar-nav .nav-link:hover::after,.navbar-nav .nav-link.is-current::after{transform:scaleX(1);transform-origin:left}
+.navbar-nav .nav-link.is-current{color:#fff}
+.project-links a{position:relative;padding-bottom:4px}
+.project-links a::after{content:"";position:absolute;right:0;bottom:0;left:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .28s var(--ease)}
+.project-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.button,.nav-cta,.contact-action{--mag-x:0px;--mag-y:0px}
+.button:hover,.nav-cta:hover{transform:translate3d(var(--mag-x),calc(-3px + var(--mag-y)),0)}
+.button-primary{box-shadow:0 0 0 1px rgba(255,255,255,.05),0 12px 36px rgba(255,255,255,.08)}
+.button-primary:hover{box-shadow:0 0 0 1px rgba(255,255,255,.28),0 18px 48px rgba(255,255,255,.16)}
+.contact-card{transition:border-color .4s,box-shadow .4s}
+.contact-card:hover{border-color:rgba(255,255,255,.48);box-shadow:0 35px 100px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.08)}
+.scroll-progress span{background:linear-gradient(90deg,#777,#fff 45%,#aaa);box-shadow:0 0 18px rgba(255,255,255,.8)}
+@media(hover:hover) and (pointer:fine){.cursor-ring,.cursor-core{display:block}}
+@media(hover:none),(pointer:coarse){.cursor-ring,.cursor-core{display:none}}
+@media(prefers-reduced-motion:reduce){
+ .intro-curtain{display:none}
+ .floating-chip{animation:none}
+ .identity-panel::after{animation:none}
+ .hero-kicker,.hero h1,.hero-description,.hero-actions,.hero-footnote{animation:none}
+ .cursor-ring,.cursor-core{display:none}
+ .project-card::after{display:none}
+ .button:hover,.nav-cta:hover{transform:none}
+}
