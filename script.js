@@ -70,3 +70,52 @@ if (copyButton && navigator.clipboard) {
 }
 
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// Barra de progresso de leitura no topo.
+const progressBar = document.querySelector("#scrollProgress span");
+let scrollTicking = false;
+const updateScrollProgress = () => {
+  if (!progressBar) return;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
+  scrollTicking = false;
+};
+window.addEventListener("scroll", () => {
+  if (!scrollTicking) {
+    window.requestAnimationFrame(updateScrollProgress);
+    scrollTicking = true;
+  }
+}, { passive: true });
+updateScrollProgress();
+
+// Luz difusa acompanha o cursor em telas com mouse, sem interferir nos cliques.
+const pointerAura = document.querySelector(".pointer-aura");
+const canUsePointerAura = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (pointerAura && canUsePointerAura) {
+  document.body.classList.add("pointer-active");
+  window.addEventListener("pointermove", (event) => {
+    pointerAura.style.left = `${event.clientX}px`;
+    pointerAura.style.top = `${event.clientY}px`;
+  }, { passive: true });
+}
+
+// Perspectiva sutil nos cards: o movimento é limitado e desativado em mobile/reduced motion.
+const supportsTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (supportsTilt) {
+  document.querySelectorAll(".project-card").forEach((card) => {
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      const rotateY = (x - 0.5) * 3.5;
+      const rotateX = (0.5 - y) * 3.5;
+      card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
